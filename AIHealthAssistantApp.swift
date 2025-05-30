@@ -12,6 +12,7 @@ struct AIHealthAssistantApp: App {
     var body: some Scene {
         WindowGroup {
             ContentView()
+                .environmentObject(LocationManager())
         }
     }
 }
