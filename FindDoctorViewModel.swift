@@ -3,6 +3,12 @@ import CoreLocation
 
 typealias AppDoctor = NearbyDoctor
 
+struct FindDoctorsResponse: Decodable {
+    let explanation: String
+    let specialty: String
+    let doctors: [AppDoctor]
+}
+
 @MainActor
 class FindDoctorViewModel: ObservableObject {
     @Published var doctors: [AppDoctor] = []
@@ -10,7 +16,7 @@ class FindDoctorViewModel: ObservableObject {
     @Published var errorMessage: String?
 
     func fetchDoctors(symptom: String, location: CLLocationCoordinate2D) async {
-        guard let url = URL(string: "https://aihealthbackendminimal.onrender.com/find-doctors") else { return }
+        guard let url = URL(string: "https://aihealthbackendminimal.onrender.com/find-doctors-full") else { return }
 
         var request = URLRequest(url: url)
         request.httpMethod = "POST"
@@ -30,13 +36,15 @@ class FindDoctorViewModel: ObservableObject {
         do {
             isLoading = true
             let (data, _) = try await URLSession.shared.data(for: request)
-            let decoded = try JSONDecoder().decode([String: [AppDoctor]].self, from: data)
-            print("✅ Doctors returned: \(decoded["doctors"]?.count ?? 0)")
-            if let doctors = decoded["doctors"] {
-                doctors.forEach { print("👨‍⚕️ \($0.name), \($0.distance) mi") }
+            if let json = try? JSONSerialization.jsonObject(with: data, options: []) {
+                print("🧾 Raw JSON response from backend:")
+                print(json)
             }
+            let decoded = try JSONDecoder().decode(FindDoctorsResponse.self, from: data)
+            print("✅ Doctors returned: \(decoded.doctors.count)")
+            decoded.doctors.forEach { print("👨‍⚕️ \($0.name), \($0.distance) mi") }
             DispatchQueue.main.async {
-                self.doctors = decoded["doctors"] ?? []
+                self.doctors = decoded.doctors
                 print("Doctors fetched: \(self.doctors.count)")
             }
         } catch {

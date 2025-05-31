@@ -53,6 +53,14 @@ struct ContentView: View {
                         }
                         .buttonStyle(.bordered)
                         .shadow(radius: 1)
+
+                        NavigationLink {
+                            UrgentCareFinderView()
+                        } label: {
+                            Label("Find Urgent Care", systemImage: "mappin.and.ellipse")
+                        }
+                        .buttonStyle(.bordered)
+                        .shadow(radius: 1)
                     }
 
                     Spacer()
@@ -65,5 +73,5 @@ struct ContentView: View {
 
 #Preview {
     ContentView()
+        .environmentObject(LocationManager())
 }
-    

@@ -38,7 +38,7 @@ struct SymptomLogHistoryView: View {
                     }
                     .padding(.horizontal)
 
-                    NavigationLink(destination: FindDoctorView(viewModel: FindDoctorViewModel(), matchedSpecialty: "")) {
+                    NavigationLink(destination: FindDoctorView(viewModel: FindDoctorViewModel(), matchedSpecialty: viewModel.logs.first?.symptom ?? "")) {
                         Label("Find a Doctor", systemImage: "stethoscope")
                             .padding()
                             .frame(maxWidth: .infinity)
